@@ -28,10 +28,8 @@ Control de Gastos es una aplicación web desarrollada en HTML, CSS y JavaScript 
 
 ### 📝 Paso a Paso para Despliegue en AWS
 
-#### 1. Configuración Inicial de la Instancia EC2
 
-
-##1. Instalación de Dependencias
+# 1. Instalación de Dependencias
 ```bash
 # Actualizar sistema
 sudo apt update && sudo apt upgrade -y
@@ -43,14 +41,14 @@ sudo apt install nginx -y
 sudo apt install git -y
 ```
 
-##2. Configuración del Firewall
+# 2. Configuración del Firewall
 ```bash
 # Habilitar puertos necesarios
 sudo ufw allow 'Nginx Full'
 sudo ufw allow 'OpenSSH'
 sudo ufw enable
 ```
-##3. Clonación y Configuración del Proyecto
+# 3. Clonación y Configuración del Proyecto
 ```bash
 
 #Crear directorio para la aplicación
@@ -63,7 +61,7 @@ cd /var/www/control_gastos
 git clone https://github.com/bdmaderam/control_gastos.git .
 ```
 
-##4. Configuración de Nginx
+# 4. Configuración de Nginx
 ```bash
 # Crear archivo de configuración
 sudo nano /etc/nginx/sites-available/control_gastos
@@ -81,7 +79,7 @@ server {
     }
 }
 ```
-##5. Habilitar el Sitio y Verificar Configuración
+# 5. Habilitar el Sitio y Verificar Configuración
 ```bash
 # Habilitar el sitio
 sudo ln -s /etc/nginx/sites-available/control_gastos /etc/nginx/sites-enabled/
@@ -95,7 +93,7 @@ sudo nginx -t
 # Reiniciar Nginx
 sudo systemctl restart nginx
 ```
-##7. Configuración de Permisos
+# 7. Configuración de Permisos
 ```bash
 # Dar permisos adecuados
 sudo chmod -R 755 /var/www/control_gastos
@@ -103,7 +101,7 @@ sudo chown -R www-data:www-data /var/www/control_gastos
 
 ```
 
-##8. Configuración del Security Group en AWS
+# 8. Configuración del Security Group en AWS
 -Ir a la consola de AWS EC2
 
 -Seleccionar la instancia
@@ -118,7 +116,7 @@ sudo chown -R www-data:www-data /var/www/control_gastos
 
 -Origen: 0.0.0.0/0
 
-##9. Verificación Final
+# 9. Verificación Final
 ```bash
 # Verificar estado de Nginx
 sudo systemctl status nginx
@@ -129,23 +127,24 @@ sudo tail -f /var/log/nginx/error.log
 # 🌐 Acceso a la Aplicación
 La aplicación estará disponible en:
 
-text
 http://tu-ip-publica:8000
-🛠️ Comandos Útiles para Mantenimiento
+
+
+# 🛠️ Comandos Útiles para Mantenimiento
 bash
-# Reiniciar Nginx
+-Reiniciar Nginx
 sudo systemctl restart nginx
 
-# Ver logs de error
+- Ver logs de error
 sudo tail -f /var/log/nginx/error.log
 
-# Ver logs de acceso
+- Ver logs de acceso
 sudo tail -f /var/log/nginx/access.log
 
-# Verificar espacio en disco
+- Verificar espacio en disco
 df -h
 
-# Ver uso de memoria
+- Ver uso de memoria
 free -h
 
 

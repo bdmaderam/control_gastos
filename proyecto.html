@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Gastos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 12px;
+            margin: 5px;
+            flex: 1 1 45%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            padding: 12px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            flex: 1 1 100%;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #f8f9fa;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #495057;
+            margin: 10px 0;
+        }
+
+        #total-amount, #initial-amount {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        #remaining-amount {
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        #chart-container {
+            margin-top: 20px;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Control de Gastos</h1>
+        <form id="expense-form">
+            <input type="text" id="expense-name" placeholder="Nombre del gasto" required>
+            <input type="number" id="expense-amount" placeholder="Monto" required>
+            <select id="expense-type" required>
+                <option value="" disabled selected>Tipo de gasto</option>
+                <option value="Alimentación">Alimentación</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Entretenimiento">Entretenimiento</option>
+                <option value="Salud">Salud</option>
+                <option value="Otros">Otros</option>
+            </select>
+            <button type="submit">Agregar Gasto</button>
+        </form>
+        <h2>Valor Inicial: <span id="initial-amount">1500000</span></h2>
+        <h2>Saldo Restante: <span id="remaining-amount">1000</span></h2>
+        <ul id="expense-list"></ul>
+        <div id="chart-container">
+            <canvas id="expense-chart"></canvas>
+        </div>
+        <div class="footer">
+        </div>
+    </div>
+    <script>
+        const form = document.getElementById('expense-form');
+        const expenseList = document.getElementById('expense-list');
+        const initialAmountDisplay = document.getElementById('initial-amount');
+        const remainingAmountDisplay = document.getElementById('remaining-amount');
+        const expenseChart = document.getElementById('expense-chart');
+
+        let initialAmount = 1500000; // Valor inicial
+        let remainingAmount = initialAmount; // Saldo restante
+        let expenseData = {}; // Objeto para almacenar los tipos de gasto
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const expenseName = document.getElementById('expense-name').value;
+            const expenseAmount = parseFloat(document.getElementById('expense-amount').value);
+            const expenseType = document.getElementById('expense-type').value;
+            
+            if (expenseName && !isNaN(expenseAmount) && expenseType) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${expenseName} (${expenseType}): $${expenseAmount.toFixed(2)}`;
+                
+                // Crear botón de eliminar
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Eliminar';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = function() {
+                    // Eliminar el gasto
+                    remainingAmount += expenseAmount; // Sumar el gasto al saldo restante
+                    remainingAmountDisplay.textContent = remainingAmount.toFixed(2);
+                    expenseList.removeChild(listItem); // Eliminar el elemento de la lista
+                    
+                    // Actualizar los datos de gastos
+                    expenseData[expenseType] -= expenseAmount;
+                    if (expenseData[expenseType] <= 0) {
+                        delete expenseData[expenseType]; // Eliminar el tipo de gasto si es cero
+                    }
+                    updateChart(); // Actualizar la gráfica
+                };
+
+                listItem.appendChild(deleteButton); // Añadir el botón al elemento de la lista
+                expenseList.appendChild(listItem);
+                
+                remainingAmount -= expenseAmount; // Restar el gasto del saldo restante
+                remainingAmountDisplay.textContent = remainingAmount.toFixed(2);
+                
+                // Actualizar los datos de gastos
+                if (!expenseData[expenseType]) {
+                    expenseData[expenseType] = 0;
+                }
+                expenseData[expenseType] += expenseAmount;
+
+                // Actualizar la gráfica
+                updateChart();
+                
+                form.reset();
+            }
+        });
+
+        const updateChart = () => {
+            const labels = Object.keys(expenseData);
+            const data = Object.values(expenseData);
+
+            const ctx = expenseChart.getContext('2d');
+            if (window.expenseChart) {
+                window.expenseChart.destroy(); // Destruir la gráfica anterior
+            }
+            window.expenseChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Distribución de Gastos',
+                        data: data,
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF'
+                        ],
+                        borderColor: '#fff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Distribución de Gastos por Tipo'
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>

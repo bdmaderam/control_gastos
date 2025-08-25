@@ -30,11 +30,9 @@ Control de Gastos es una aplicación web desarrollada en HTML, CSS y JavaScript 
 
 #### 1. Configuración Inicial de la Instancia EC2
 
+
+##1. Instalación de Dependencias
 ```bash
-# Conectarse a la instancia
-ssh -i "tu-clave.pem" ubuntu@tu-ip-publica
-2. Instalación de Dependencias
-bash
 # Actualizar sistema
 sudo apt update && sudo apt upgrade -y
 
@@ -43,23 +41,30 @@ sudo apt install nginx -y
 
 # Instalar Git
 sudo apt install git -y
-3. Configuración del Firewall
-bash
+```
+
+##2. Configuración del Firewall
+```bash
 # Habilitar puertos necesarios
 sudo ufw allow 'Nginx Full'
 sudo ufw allow 'OpenSSH'
 sudo ufw enable
-4. Clonación y Configuración del Proyecto
-bash
-# Crear directorio para la aplicación
+```
+##3. Clonación y Configuración del Proyecto
+```bash
+
+#Crear directorio para la aplicación
+
 sudo mkdir -p /var/www/control_gastos
 sudo chown -R ubuntu:ubuntu /var/www/control_gastos
 
 # Clonar el proyecto
 cd /var/www/control_gastos
 git clone https://github.com/bdmaderam/control_gastos.git .
-5. Configuración de Nginx
-bash
+```
+
+##4. Configuración de Nginx
+```bash
 # Crear archivo de configuración
 sudo nano /etc/nginx/sites-available/control_gastos
 Contenido del archivo de configuración:
@@ -75,8 +80,9 @@ server {
         try_files $uri $uri/ =404;
     }
 }
-6. Habilitar el Sitio y Verificar Configuración
-bash
+```
+##5. Habilitar el Sitio y Verificar Configuración
+```bash
 # Habilitar el sitio
 sudo ln -s /etc/nginx/sites-available/control_gastos /etc/nginx/sites-enabled/
 
@@ -88,33 +94,38 @@ sudo nginx -t
 
 # Reiniciar Nginx
 sudo systemctl restart nginx
-7. Configuración de Permisos
-bash
+```
+##7. Configuración de Permisos
+```bash
 # Dar permisos adecuados
 sudo chmod -R 755 /var/www/control_gastos
 sudo chown -R www-data:www-data /var/www/control_gastos
-8. Configuración del Security Group en AWS
-Ir a la consola de AWS EC2
 
-Seleccionar la instancia
+```
 
-Editar el Security Group
+##8. Configuración del Security Group en AWS
+-Ir a la consola de AWS EC2
 
-Agregar regla de entrada:
+-Seleccionar la instancia
 
-Tipo: Custom TCP
+-Editar el Security Group
 
-Puerto: 8000
+-Agregar regla de entrada:
 
-Origen: 0.0.0.0/0
+-Tipo: Custom TCP
 
-9. Verificación Final
-bash
+-Puerto: 8000
+
+-Origen: 0.0.0.0/0
+
+##9. Verificación Final
+```bash
 # Verificar estado de Nginx
 sudo systemctl status nginx
 
 # Verificar logs en tiempo real
 sudo tail -f /var/log/nginx/error.log
+```
 🌐 Acceso a la Aplicación
 La aplicación estará disponible en:
 
@@ -147,7 +158,7 @@ Alojamiento: AWS EC2
 
 Puerto: 8000
 
-🔧 Troubleshooting Común
+###🔧 Troubleshooting Común
 Error 403 Forbidden: Verificar permisos de archivos
 
 Conexión rechazada: Verificar Security Group en AWS
@@ -156,7 +167,7 @@ Página no encontrada: Verificar ruta del archivo index.html
 
 Problemas de CORS: Configuración adecuada de Nginx
 
-📞 Soporte
+###📞 Soporte
 Para problemas adicionales, verificar:
 
 Logs de Nginx: /var/log/nginx/error.log

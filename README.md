@@ -126,7 +126,7 @@ sudo systemctl status nginx
 # Verificar logs en tiempo real
 sudo tail -f /var/log/nginx/error.log
 ```
-🌐 Acceso a la Aplicación
+# 🌐 Acceso a la Aplicación
 La aplicación estará disponible en:
 
 text
@@ -147,7 +147,9 @@ df -h
 
 # Ver uso de memoria
 free -h
-📊 Características Técnicas
+
+
+# 📊 Características Técnicas
 Frontend: HTML5, CSS3, JavaScript ES6+
 
 Gráficas: Chart.js para visualización de datos
@@ -158,7 +160,7 @@ Alojamiento: AWS EC2
 
 Puerto: 8000
 
-###🔧 Troubleshooting Común
+# 🔧 Troubleshooting Común
 Error 403 Forbidden: Verificar permisos de archivos
 
 Conexión rechazada: Verificar Security Group en AWS
@@ -167,7 +169,7 @@ Página no encontrada: Verificar ruta del archivo index.html
 
 Problemas de CORS: Configuración adecuada de Nginx
 
-###📞 Soporte
+# 📞 Soporte
 Para problemas adicionales, verificar:
 
 Logs de Nginx: /var/log/nginx/error.log
@@ -175,5 +177,7 @@ Logs de Nginx: /var/log/nginx/error.log
 Estado del servicio: sudo systemctl status nginx
 
 Configuración: sudo nginx -t
+
+
 
 Este proyecto demuestra un flujo completo de desarrollo web moderno, desde la implementación frontend hasta el despliegue en infraestructura cloud con AWS.

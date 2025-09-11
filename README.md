@@ -178,5 +178,49 @@ Estado del servicio: sudo systemctl status nginx
 Configuración: sudo nginx -t
 
 
+## Docker
+# Prerrequisitos
+
+Habilita la virtualización en tu BIOS/UEFI
+
+Instala Docker Desktop para Windows
+
+Asegúrate de que Hyper-V esté habilitado en Windows Features
+
+Reinicia tu equipo después de la instalación
+
+# Preparar el proyecto
+Para crear la imagen del proyecto es necesario que se creen los siguientes archivos:
+1. Dockerfile
+```bash
+FROM nginx:alpine
+
+COPY src/ /usr/share/nginx/html
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+2. .dockerignore
+```bash
+node_modules
+.git
+.env
+*.md
+.github
+tests
+```
+# Construir la imagen de Docker del proyecto
+Para realizar la construccion de la imagen del proyecto tenemos que abrir una consola y ubicarnos en la ruta de donde estamos guardando nuestro proyecto luego ejecutar el siguiente comando
+```bash
+docker build -t nombre-mi-app .
+```
+# Ejecutar el contenedor
+Una vez se tiene la imagen del proyecto ya podemos ejecutar el contenedor de nuestro aplicativo para ello ejecutamos
+```bash
+docker run -p 8080:80 nombre-mi-app
+```
+Luego de esto mediente el enlace http://localhost:8080 podremos ver nuestro aplicativo de manera web.
+
 
 Este proyecto demuestra un flujo completo de desarrollo web moderno, desde la implementación frontend hasta el despliegue en infraestructura cloud con AWS.
